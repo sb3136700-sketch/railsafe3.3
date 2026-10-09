@@ -16,214 +16,286 @@ import {
   ChevronRight,
   ShieldCheck,
   Compass,
-  CheckSquare
+  CheckSquare,
+  CreditCard,
+  ShieldAlert
 } from 'lucide-react';
+import { useTheme } from '../utils/themeContext';
+
+export type AppPageTab = 
+  | 'dashboard'
+  | 'booking'
+  | 'animatic'
+  | 'corridor'
+  | 'planner'
+  | 'station'
+  | 'pnr'
+  | 'coach'
+  | 'fare'
+  | 'checklist'
+  | 'food'
+  | 'madad'
+  | 'ai';
 
 interface SidebarProps {
-  activeSession: string;
-  onNavigateToSession: (sessionId: string) => void;
+  activePage: AppPageTab;
+  onSelectPage: (page: AppPageTab) => void;
   activeTrainNumber: string;
   activeTrainName: string;
   onOpenSosModal: () => void;
   onOpenFoodModal: () => void;
   onOpenComplaintModal: () => void;
-  onOpenTicketModal: () => void;
 }
 
-interface NavSectionItem {
-  id: string;
-  number: string;
+interface NavMenuItem {
+  id: AppPageTab;
   label: string;
   subLabel: string;
   icon: React.ElementType;
   badge?: string;
+  badgeColor?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  activeSession,
-  onNavigateToSession,
+  activePage,
+  onSelectPage,
   activeTrainNumber,
   activeTrainName,
   onOpenSosModal,
   onOpenFoodModal,
   onOpenComplaintModal,
-  onOpenTicketModal,
 }) => {
-  const mainSessions: NavSectionItem[] = [
+  const { theme } = useTheme();
+
+  const mainNavItems: NavMenuItem[] = [
     {
-      id: 'master-dashboard',
-      number: '01',
+      id: 'dashboard',
       label: 'Live Dashboard',
-      subLabel: 'KPIs, Origin & Days',
+      subLabel: 'KPIs, Speed & Origin IST',
       icon: Navigation,
-    },
-    {
-      id: 'animatic-timeline',
-      number: '02',
-      label: 'Animatic Timeline',
-      subLabel: 'Animated Rail View',
-      icon: Train,
       badge: 'LIVE',
+      badgeColor: 'bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-500/40',
     },
     {
-      id: 'route-corridor',
-      number: '03',
+      id: 'booking',
+      label: 'Train Booking',
+      subLabel: 'IRCTC Reserved E-Tickets',
+      icon: CreditCard,
+      badge: 'BOOK',
+      badgeColor: 'bg-sky-100 dark:bg-sky-500/20 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-400/40',
+    },
+    {
+      id: 'animatic',
+      label: 'Animatic Timeline',
+      subLabel: 'Simulated Rails & Engine',
+      icon: Train,
+    },
+    {
+      id: 'corridor',
       label: 'Route & Corridor',
-      subLabel: 'Stops & Timetable',
+      subLabel: 'Station Stops & Halts',
       icon: Clock,
     },
     {
-      id: 'train-planner',
-      number: '04',
+      id: 'planner',
       label: 'Train Finder',
-      subLabel: '7-Day Schedule Matrix',
+      subLabel: '7-Day Frequency Matrix',
       icon: Calendar,
     },
     {
-      id: 'station-facilities',
-      number: '05',
+      id: 'station',
       label: 'Station Directory',
-      subLabel: 'Search & Amenities',
+      subLabel: 'Search & Verified Amenities',
       icon: Building2,
-      badge: 'SEARCH',
     },
     {
-      id: 'passenger-services',
-      number: '06',
-      label: 'Passenger Hub',
-      subLabel: 'PNR, Coach & Fares',
+      id: 'pnr',
+      label: 'PNR Status Desk',
+      subLabel: 'Confirmed Berths & Charting',
       icon: Ticket,
+    },
+    {
+      id: 'coach',
+      label: 'Coach & Berth Map',
+      subLabel: 'Interactive Seat Layout',
+      icon: LayoutGrid,
+    },
+    {
+      id: 'fare',
+      label: 'Fare Calculator',
+      subLabel: 'Dynamic Slab Estimation',
+      icon: Calculator,
+    },
+    {
+      id: 'checklist',
+      label: 'Travel Checklist',
+      subLabel: 'Luggage & Journey Prep',
+      icon: CheckSquare,
     },
   ];
 
   return (
-    <aside className="w-64 shrink-0 hidden lg:flex flex-col h-[calc(100vh-4rem)] sticky top-16 border-r border-slate-800 bg-slate-950/95 backdrop-blur-md z-30 select-none">
+    <aside className="w-64 shrink-0 hidden lg:flex flex-col h-[calc(100vh-4rem)] sticky top-16 border-r border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md z-30 select-none transition-colors">
+      
       {/* Brand & Active Train Badge */}
-      <div className="p-4 border-b border-slate-800/90">
+      <div className="p-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 font-black shadow-md shadow-amber-500/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/40 text-amber-600 dark:text-amber-400 font-black shadow-sm">
             <Train className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <span className="text-sm font-extrabold text-white block tracking-tight truncate">
+            <span className="text-sm font-extrabold text-slate-900 dark:text-white block tracking-tight truncate">
               TRAVELLING GUIDE
             </span>
-            <span className="text-[10px] text-amber-400 font-semibold tracking-wide block">
+            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold tracking-wide block">
               Indian Railways Portal
             </span>
           </div>
         </div>
 
         {/* Selected Train Quick Card */}
-        <div className="mt-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+        <div className="mt-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="min-w-0">
-            <span className="text-[10px] text-slate-400 block uppercase font-mono">Current Train</span>
-            <span className="text-xs font-bold font-mono text-amber-400 block truncate">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-mono">Tracking Train</span>
+            <span className="text-xs font-bold font-mono text-amber-600 dark:text-amber-400 block truncate">
               #{activeTrainNumber}
             </span>
-            <span className="text-[11px] text-white block truncate font-medium">
+            <span className="text-[11px] text-slate-800 dark:text-slate-200 block truncate font-medium">
               {activeTrainName}
             </span>
           </div>
           <button
-            onClick={() => onNavigateToSession('train-planner')}
-            className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold transition-colors cursor-pointer shrink-0"
-            title="Change train in finder"
+            onClick={() => onSelectPage('planner')}
+            className="text-[10px] px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/15 border border-amber-300 dark:border-amber-400/30 text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-white font-bold transition-all cursor-pointer shrink-0"
+            title="Search different train"
           >
             Change
           </button>
         </div>
       </div>
 
-      {/* Main Navigation Sessions (Scrolls down master page) */}
+      {/* Main Multi-Page Navigation Menu */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5 scrollbar-thin">
-        <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Journey Sessions
+        <div className="px-2 py-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+          Railway Modules
         </div>
 
-        {mainSessions.map((session) => {
-          const isActive = activeSession === session.id;
-          const Icon = session.icon;
+        {mainNavItems.map((item) => {
+          const isActive = activePage === item.id;
+          const Icon = item.icon;
 
           return (
             <button
-              key={session.id}
-              onClick={() => onNavigateToSession(session.id)}
+              key={item.id}
+              onClick={() => onSelectPage(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left transition-all cursor-pointer group ${
                 isActive
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800'
+                  ? 'bg-sky-50 dark:bg-sky-500/20 border border-sky-300 dark:border-sky-400/50 text-sky-900 dark:text-white font-bold shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900/80 border border-transparent'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-mono font-bold shrink-0 ${
-                  isActive ? 'bg-slate-950 text-amber-400' : 'bg-slate-900 text-slate-400 group-hover:text-amber-400'
+                <div className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-mono font-bold shrink-0 transition-colors ${
+                  isActive 
+                    ? 'bg-sky-200/50 dark:bg-sky-400/20 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-400/40' 
+                    : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 border border-slate-200 dark:border-slate-800'
                 }`}>
-                  {session.number}
+                  <Icon className="h-4 w-4" />
                 </div>
 
                 <div className="min-w-0">
                   <div className="text-xs font-bold truncate flex items-center gap-1.5">
-                    <span>{session.label}</span>
-                    {session.badge && (
-                      <span className={`text-[9px] px-1.5 py-0.2 rounded font-black tracking-wider ${
-                        isActive ? 'bg-slate-950 text-amber-400' : 'bg-amber-500/20 text-amber-300'
+                    <span className={isActive ? 'text-sky-900 dark:text-sky-200' : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'}>
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span className={`text-[9px] px-1.5 py-0.2 rounded font-black tracking-wider border ${
+                        item.badgeColor || 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-400/30'
                       }`}>
-                        {session.badge}
+                        {item.badge}
                       </span>
                     )}
                   </div>
-                  <div className={`text-[10px] truncate ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
-                    {session.subLabel}
+                  <div className={`text-[10px] truncate ${isActive ? 'text-sky-700 dark:text-sky-300/70' : 'text-slate-500'}`}>
+                    {item.subLabel}
                   </div>
                 </div>
               </div>
 
               <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-transform ${
-                isActive ? 'text-slate-950 rotate-90' : 'text-slate-600 group-hover:text-slate-400'
+                isActive ? 'text-sky-600 dark:text-sky-300 translate-x-0.5' : 'text-slate-400 dark:text-slate-600 group-hover:text-slate-600 dark:group-hover:text-slate-400'
               }`} />
             </button>
           );
         })}
 
-        {/* Quick Utility Links */}
-        <div className="pt-4 px-2 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Passenger Services
+        {/* Quick Utility Triggers */}
+        <div className="pt-4 px-2 pb-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+          Quick Services
         </div>
 
         <button
-          onClick={onOpenTicketModal}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-900 transition-colors text-left cursor-pointer"
+          onClick={() => onSelectPage('food')}
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors text-left cursor-pointer ${
+            activePage === 'food'
+              ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-900 dark:text-amber-200 font-bold border border-amber-300 dark:border-amber-400/40'
+              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900'
+          }`}
         >
-          <Ticket className="h-4 w-4 text-cyan-400 shrink-0" />
-          <span className="truncate">IRCTC Ticket Booking</span>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Utensils className="h-4 w-4 text-amber-500 shrink-0" />
+            <span className="truncate">Station Food & Catering</span>
+          </div>
+          <ChevronRight className="h-3 w-3 text-slate-400" />
         </button>
 
         <button
-          onClick={onOpenFoodModal}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-900 transition-colors text-left cursor-pointer"
+          onClick={() => onSelectPage('madad')}
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors text-left cursor-pointer ${
+            activePage === 'madad'
+              ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-200 font-bold border border-indigo-300 dark:border-indigo-400/40'
+              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900'
+          }`}
         >
-          <Utensils className="h-4 w-4 text-amber-400 shrink-0" />
-          <span className="truncate">Order Food to Berth</span>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <FileText className="h-4 w-4 text-indigo-500 shrink-0" />
+            <span className="truncate">RailMadad Help (139)</span>
+          </div>
+          <ChevronRight className="h-3 w-3 text-slate-400" />
         </button>
 
         <button
-          onClick={onOpenComplaintModal}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-900 transition-colors text-left cursor-pointer"
+          onClick={() => onSelectPage('ai')}
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors text-left cursor-pointer ${
+            activePage === 'ai'
+              ? 'bg-sky-50 dark:bg-sky-500/20 text-sky-900 dark:text-sky-200 font-bold border border-sky-300 dark:border-sky-400/40'
+              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900'
+          }`}
         >
-          <FileText className="h-4 w-4 text-indigo-400 shrink-0" />
-          <span className="truncate">RailMadad Complaint (139)</span>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Sparkles className="h-4 w-4 text-sky-500 shrink-0" />
+            <span className="truncate">AI Rail Assistant Desk</span>
+          </div>
+          <ChevronRight className="h-3 w-3 text-slate-400" />
         </button>
       </div>
 
-      {/* Bottom Emergency SOS Card */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950">
+      {/* Bottom High-Quality SOS Trigger (Reassuring, non-messy) */}
+      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
         <button
           onClick={onOpenSosModal}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 hover:text-red-200 text-xs font-bold transition-all cursor-pointer shadow-sm"
+          className="w-full flex items-center justify-between p-2.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-300 dark:border-rose-500/40 text-rose-800 dark:text-rose-200 text-xs font-bold transition-all cursor-pointer shadow-sm group"
         >
-          <PhoneCall className="h-4 w-4 text-red-400 animate-pulse" />
-          <span>Emergency SOS (RPF 182)</span>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="h-7 w-7 rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <ShieldAlert className="h-4 w-4" />
+            </div>
+            <div className="text-left truncate">
+              <div className="leading-tight font-extrabold text-[11px]">Emergency SOS</div>
+              <div className="text-[10px] text-rose-600 dark:text-rose-400 font-mono font-medium">RPF 182 · Rail 139</div>
+            </div>
+          </div>
+          <PhoneCall className="h-3.5 w-3.5 text-rose-500 group-hover:scale-110 transition-transform shrink-0" />
         </button>
       </div>
     </aside>
