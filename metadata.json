@@ -1,0 +1,6 @@
+{
+  "name": "TRAVELLING GUIDE",
+  "description": "Your Smart Companion for Every Train Journey. Live train tracking, route halts, platform info, station food specialties, coach position, and journey planner for Indian Railways.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
